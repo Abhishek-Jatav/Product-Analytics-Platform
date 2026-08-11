@@ -1,0 +1,1770 @@
+PRODUCT ANALYTICS PLATFORM — API TEST SHEET (Thunder Client)
+================================================================
+Base URL   : http://localhost:8000/api/v1
+Auth       : Bearer JWT (Authorization: Bearer <access_token>) for all
+             dashboard endpoints. Exceptions:
+               - POST /track          -> uses X-API-Key header OR ?api_key= query param
+               - WS  /ws/projects/{id}/live -> uses ?token= query param (JWT)
+Response envelope (every JSON response, except CSV export):
+             { "success": bool, "message": string, "data": object|array|null, "errors": any|null }
+
+Fill "TESTED RESULT" after running each request in Thunder Client.
+================================================================
+
+
+1) HEALTH CHECK
+----------------
+ENDPOINT
+GET /health
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Service is healthy",
+  "data": { "status": "ok" },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Service is healthy",
+  "data": {
+    "status": "ok"
+  },
+  "errors": null
+}
+
+
+2) REGISTER
+------------
+ENDPOINT
+POST /auth/register
+
+SAMPLE INPUT
+{
+  "name": "Abhishek Jatav",
+  "email": "abhishek@example.com",
+  "password": "Passw0rd123"
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Account created successfully",
+  "data": {
+    "access_token": "eyJhbGciOi...",
+    "refresh_token": "eyJhbGciOi...",
+    "token_type": "bearer",
+    "user": {
+      "id": "b6b0...uuid",
+      "name": "Abhishek Jatav",
+      "email": "abhishek@example.com",
+      "is_active": true
+    }
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Account created successfully",
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZWZiYzhlNy1hZmQ2LTRiZmUtOGJiOC01ZmMzMzlhOTI4ZDUiLCJleHAiOjE3ODYwNDA0MzksInR5cGUiOiJhY2Nlc3MifQ.2-g9pT_Vvi9dqeoL-sx4XLnydu7cipreu69UBkNQmDk",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZWZiYzhlNy1hZmQ2LTRiZmUtOGJiOC01ZmMzMzlhOTI4ZDUiLCJleHAiOjE3ODY2MjcyMzksInR5cGUiOiJyZWZyZXNoIn0.juZdR90LrZrXfQfw8xdw3tcq1EZyCot0PCGIPVDRXzs",
+    "token_type": "bearer",
+    "user": {
+      "id": "fefbc8e7-afd6-4bfe-8bb8-5fc339a928d5",
+      "name": "Abhishek Jatav",
+      "email": "abhishek@example.com",
+      "is_active": true
+    }
+  },
+  "errors": null
+}
+
+
+
+3) LOGIN
+---------
+ENDPOINT
+POST /auth/login
+
+SAMPLE INPUT
+{
+  "email": "abhishek@example.com",
+  "password": "Passw0rd123"
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Logged in successfully",
+  "data": {
+    "access_token": "eyJhbGciOi...",
+    "refresh_token": "eyJhbGciOi...",
+    "token_type": "bearer",
+    "user": { "id": "...", "name": "Abhishek Jatav", "email": "abhishek@example.com", "is_active": true }
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+
+{
+  "success": true,
+  "message": "Logged in successfully",
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZWZiYzhlNy1hZmQ2LTRiZmUtOGJiOC01ZmMzMzlhOTI4ZDUiLCJleHAiOjE3ODYwNDA0NzEsInR5cGUiOiJhY2Nlc3MifQ.p-wKI2EBKWfkjLag-lVSmpeCJNguzNawdqolumtcsw8",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZWZiYzhlNy1hZmQ2LTRiZmUtOGJiOC01ZmMzMzlhOTI4ZDUiLCJleHAiOjE3ODY2MjcyNzEsInR5cGUiOiJyZWZyZXNoIn0.TdH8qVz4KDDgo1Sgop7-yAxDAW9yQuKTrtXEbUiqrL4",
+    "token_type": "bearer",
+    "user": {
+      "id": "fefbc8e7-afd6-4bfe-8bb8-5fc339a928d5",
+      "name": "Abhishek Jatav",
+      "email": "abhishek@example.com",
+      "is_active": true
+    }
+  },
+  "errors": null
+}
+
+
+
+4) GET PROFILE
+---------------
+ENDPOINT
+GET /auth/profile
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Profile fetched",
+  "data": { "id": "...", "name": "Abhishek Jatav", "email": "abhishek@example.com", "is_active": true },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Profile fetched",
+  "data": {
+    "id": "fefbc8e7-afd6-4bfe-8bb8-5fc339a928d5",
+    "name": "Abhishek Jatav",
+    "email": "abhishek@example.com",
+    "is_active": true
+  },
+  "errors": null
+}
+
+
+5) LOGOUT
+----------
+ENDPOINT
+POST /auth/logout
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Logged out successfully",
+  "data": null,
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Logged out successfully",
+  "data": null,
+  "errors": null
+}
+
+
+
+
+6) CREATE WORKSPACE
+---------------------
+ENDPOINT
+POST /workspaces
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+{
+  "name": "My Startup"
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Workspace created successfully",
+  "data": { "id": "...", "name": "My Startup", "slug": "my-startup", "role": "owner" },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Workspace created successfully",
+  "data": {
+    "id": "9eb5f1c0-cb31-4e42-8138-d7ab880f08af",
+    "name": "My Startup",
+    "slug": "my-startup-0a6640",
+    "role": "owner"
+  },
+  "errors": null
+}
+
+
+
+7) LIST WORKSPACES
+--------------------
+ENDPOINT
+GET /workspaces
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Workspaces fetched",
+  "data": [
+    { "id": "...", "name": "My Startup", "slug": "my-startup", "role": "owner" }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Workspaces fetched",
+  "data": [
+    {
+      "id": "9eb5f1c0-cb31-4e42-8138-d7ab880f08af",
+      "name": "My Startup",
+      "slug": "my-startup-0a6640",
+      "role": "owner"
+    }
+  ],
+  "errors": null
+}
+
+
+
+8) LIST WORKSPACE MEMBERS
+----------------------------
+ENDPOINT
+GET /workspaces/{workspace_id}/members
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Members fetched",
+  "data": [
+    {
+      "id": "membership-uuid",
+      "user_id": "user-uuid",
+      "name": "Abhishek Jatav",
+      "email": "abhishek@example.com",
+      "role": "owner",
+      "joined_at": "2026-08-05T10:00:00"
+    }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Members fetched",
+  "data": [
+    {
+      "id": "f0fb64c6-92b0-4247-b3b8-2fc6a6fe2b8c",
+      "user_id": "fefbc8e7-afd6-4bfe-8bb8-5fc339a928d5",
+      "name": "Abhishek Jatav",
+      "email": "abhishek@example.com",
+      "role": "owner",
+      "joined_at": "2026-08-06T13:24:47.438376+00:00"
+    }
+  ],
+  "errors": null
+}
+
+
+9) INVITE MEMBER
+------------------
+ENDPOINT
+POST /workspaces/{workspace_id}/members
+Header: Authorization: Bearer <access_token>
+Note: invited user must already be a registered user (no email invites in this env).
+
+SAMPLE INPUT
+{
+  "email": "teammate@example.com",
+  "role": "member"
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Member added successfully",
+  "data": {
+    "id": "membership-uuid",
+    "user_id": "teammate-user-uuid",
+    "name": "Teammate Name",
+    "email": "teammate@example.com",
+    "role": "member",
+    "joined_at": "2026-08-05T10:05:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Member added successfully",
+  "data": {
+    "id": "02b67b0f-413e-44ff-a8b4-4581aaab6fa1",
+    "user_id": "fd32f2b7-3c29-49e9-b2fa-edb18fd08790",
+    "name": "Nanu",
+    "email": "teammate@example.com",
+    "role": "member",
+    "joined_at": "2026-08-06T13:30:37.877164+00:00"
+  },
+  "errors": null
+}
+
+
+
+10) UPDATE MEMBER ROLE
+-------------------------
+ENDPOINT
+PATCH /workspaces/{workspace_id}/members/{member_id}
+Header: Authorization: Bearer <access_token>
+(only owner can change roles)
+
+SAMPLE INPUT
+{
+  "role": "admin"
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Member role updated",
+  "data": {
+    "id": "membership-uuid",
+    "user_id": "teammate-user-uuid",
+    "name": "Teammate Name",
+    "email": "teammate@example.com",
+    "role": "admin",
+    "joined_at": "2026-08-05T10:05:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Member role updated",
+  "data": {
+    "id": "02b67b0f-413e-44ff-a8b4-4581aaab6fa1",
+    "user_id": "fd32f2b7-3c29-49e9-b2fa-edb18fd08790",
+    "name": "Nanu",
+    "email": "teammate@example.com",
+    "role": "admin",
+    "joined_at": "2026-08-06T13:30:37.877164+00:00"
+  },
+  "errors": null
+}
+
+
+11) REMOVE MEMBER
+--------------------
+ENDPOINT
+DELETE /workspaces/{workspace_id}/members/{member_id}
+Header: Authorization: Bearer <access_token>
+(cannot remove the last owner)
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Member removed successfully",
+  "data": null,
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Member removed successfully",
+  "data": null,
+  "errors": null
+}
+
+
+12) CREATE PROJECT
+---------------------
+ENDPOINT
+POST /workspaces/{workspace_id}/projects
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+{
+  "name": "My Mobile App"
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Project created successfully",
+  "data": {
+    "project": { "id": "...", "name": "My Mobile App", "workspace_id": "..." },
+    "api_key": { "id": "...", "key": "pk_live_XXXXXXXXXXXX", "label": "Default" }
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Project created successfully",
+  "data": {
+    "project": {
+      "id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "My Mobile App",
+      "workspace_id": "9eb5f1c0-cb31-4e42-8138-d7ab880f08af"
+    },
+    "api_key": {
+      "id": "4fd12b0c-e799-404c-8bb8-1dce17f31beb",
+      "key": "pap_knkdXfoMsLhfGLdasJrBlESzaSEPrkNs2qO5kaTQJ7M",
+      "label": "Default"
+    }
+  },
+  "errors": null
+}
+
+
+13) LIST PROJECTS
+--------------------
+ENDPOINT
+GET /workspaces/{workspace_id}/projects
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Projects fetched",
+  "data": [
+    { "id": "...", "name": "My Mobile App", "workspace_id": "..." }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Projects fetched",
+  "data": [
+    {
+      "id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "My Mobile App",
+      "workspace_id": "9eb5f1c0-cb31-4e42-8138-d7ab880f08af"
+    }
+  ],
+  "errors": null
+}
+
+
+
+
+14) TRACK EVENT (SDK ingestion — API key auth, not JWT)
+-----------------------------------------------------------
+ENDPOINT
+POST /track
+Header: X-API-Key: pk_live_XXXXXXXXXXXX
+   (or use query param instead of header: POST /track?api_key=pk_live_XXXXXXXXXXXX)
+
+SAMPLE INPUT
+{
+  "name": "Purchase",
+  "distinct_id": "user_123",
+  "properties": { "amount": 49.99, "country": "IN" }
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Event tracked",
+  "data": {
+    "id": "...",
+    "name": "Purchase",
+    "distinct_id": "user_123",
+    "properties": { "amount": 49.99, "country": "IN" },
+    "timestamp": "2026-08-05T10:10:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Event tracked",
+  "data": {
+    "id": "ec565115-1bf6-4c62-900d-8e869667d025",
+    "name": "Purchase",
+    "distinct_id": "user_123",
+    "properties": {
+      "amount": 49.99,
+      "country": "IN"
+    },
+    "timestamp": "2026-08-06T15:03:07.007330+00:00"
+  },
+  "errors": null
+}
+
+
+
+
+15) LIST EVENTS (Event Explorer)
+------------------------------------
+ENDPOINT
+GET /projects/{project_id}/events?event_name=Purchase&page=1&page_size=25
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body — query params only, all optional)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Events fetched",
+  "data": {
+    "items": [
+      {
+        "id": "...",
+        "name": "Purchase",
+        "distinct_id": "user_123",
+        "properties": { "amount": 49.99, "country": "IN" },
+        "timestamp": "2026-08-05T10:10:00"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "page_size": 25
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Events fetched",
+  "data": {
+    "items": [
+      {
+        "id": "ec565115-1bf6-4c62-900d-8e869667d025",
+        "name": "Purchase",
+        "distinct_id": "user_123",
+        "properties": {
+          "amount": 49.99,
+          "country": "IN"
+        },
+        "timestamp": "2026-08-06T15:03:07.007330+00:00"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "page_size": 25
+  },
+  "errors": null
+}
+
+
+16) LIST EVENT NAMES
+------------------------
+ENDPOINT
+GET /projects/{project_id}/events/names
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Event names fetched",
+  "data": ["Purchase", "Signup", "PageView"],
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Event names fetched",
+  "data": [
+    "Purchase"
+  ],
+  "errors": null
+}
+
+
+17) DASHBOARD SUMMARY (KPIs)
+--------------------------------
+ENDPOINT
+GET /projects/{project_id}/analytics/summary?start_date=2026-07-01&end_date=2026-08-05&conversion_event=Purchase&revenue_event=Purchase&revenue_property=amount
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body — all query params optional, defaults shown above)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Dashboard summary fetched",
+  "data": {
+    "start_date": "2026-07-01",
+    "end_date": "2026-08-05",
+    "dau": 42,
+    "wau": 210,
+    "mau": 900,
+    "active_users": 42,
+    "new_users": 10,
+    "returning_users": 32,
+    "revenue": 1499.50,
+    "conversion_rate": 12.5
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Dashboard summary fetched",
+  "data": {
+    "start_date": "2026-07-01",
+    "end_date": "2026-08-05",
+    "dau": 0,
+    "wau": 0,
+    "mau": 0,
+    "active_users": 0,
+    "new_users": 0,
+    "returning_users": 0,
+    "revenue": 0.0,
+    "conversion_rate": 0.0
+  },
+  "errors": null
+}
+
+
+18) DASHBOARD TREND (chart)
+--------------------------------
+ENDPOINT
+GET /projects/{project_id}/analytics/trend?start_date=2026-07-01&end_date=2026-08-05
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Trend fetched",
+  "data": {
+    "points": [
+      { "date": "2026-07-01", "active_users": 30 },
+      { "date": "2026-07-02", "active_users": 35 }
+    ]
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Trend fetched",
+  "data": {
+    "points": [
+      {
+        "date": "2026-07-01",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-02",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-03",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-04",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-05",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-06",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-07",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-08",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-09",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-10",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-11",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-12",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-13",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-14",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-15",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-16",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-17",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-18",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-19",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-20",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-21",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-22",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-23",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-24",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-25",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-26",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-27",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-28",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-29",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-30",
+        "active_users": 0
+      },
+      {
+        "date": "2026-07-31",
+        "active_users": 0
+      },
+      {
+        "date": "2026-08-01",
+        "active_users": 0
+      },
+      {
+        "date": "2026-08-02",
+        "active_users": 0
+      },
+      {
+        "date": "2026-08-03",
+        "active_users": 0
+      },
+      {
+        "date": "2026-08-04",
+        "active_users": 0
+      },
+      {
+        "date": "2026-08-05",
+        "active_users": 0
+      }
+    ]
+  },
+  "errors": null
+}
+
+
+19) CREATE FUNNEL
+---------------------
+ENDPOINT
+POST /projects/{project_id}/funnels
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+{
+  "name": "Signup to Purchase",
+  "steps": ["Signup", "AddToCart", "Purchase"]
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Funnel created successfully",
+  "data": {
+    "id": "...",
+    "project_id": "...",
+    "name": "Signup to Purchase",
+    "steps": ["Signup", "AddToCart", "Purchase"],
+    "created_at": "2026-08-05T10:20:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Funnel created successfully",
+  "data": {
+    "id": "299ff0ef-87e2-4c8a-8994-a99c55406b42",
+    "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+    "name": "Signup to Purchase",
+    "steps": [
+      "Signup",
+      "AddToCart",
+      "Purchase"
+    ],
+    "created_at": "2026-08-06T15:46:14.006385+00:00"
+  },
+  "errors": null
+}
+
+
+
+
+20) LIST FUNNELS
+--------------------
+ENDPOINT
+GET /projects/{project_id}/funnels
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Funnels fetched",
+  "data": [
+    { "id": "...", "project_id": "...", "name": "Signup to Purchase", "steps": ["Signup","AddToCart","Purchase"], "created_at": "2026-08-05T10:20:00" }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Funnels fetched",
+  "data": [
+    {
+      "id": "299ff0ef-87e2-4c8a-8994-a99c55406b42",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "Signup to Purchase",
+      "steps": [
+        "Signup",
+        "AddToCart",
+        "Purchase"
+      ],
+      "created_at": "2026-08-06T15:46:14.006385+00:00"
+    }
+  ],
+  "errors": null
+}
+
+
+
+21) FUNNEL ANALYSIS
+-----------------------
+ENDPOINT
+GET /projects/{project_id}/funnels/{funnel_id}/analysis?start_date=2026-07-01&end_date=2026-08-05
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Funnel analysis complete",
+  "data": {
+    "funnel": { "id": "...", "project_id": "...", "name": "Signup to Purchase", "steps": ["Signup","AddToCart","Purchase"], "created_at": "..." },
+    "start_date": "2026-07-01",
+    "end_date": "2026-08-05",
+    "steps": [
+      { "step_index": 0, "event_name": "Signup", "users_reached": 100, "conversion_from_start": 100.0, "conversion_from_previous": 100.0, "drop_off": 0, "avg_time_from_previous_seconds": null },
+      { "step_index": 1, "event_name": "AddToCart", "users_reached": 60, "conversion_from_start": 60.0, "conversion_from_previous": 60.0, "drop_off": 40, "avg_time_from_previous_seconds": 320.5 },
+      { "step_index": 2, "event_name": "Purchase", "users_reached": 25, "conversion_from_start": 25.0, "conversion_from_previous": 41.7, "drop_off": 35, "avg_time_from_previous_seconds": 1500.2 }
+    ]
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Funnel analysis complete",
+  "data": {
+    "funnel": {
+      "id": "299ff0ef-87e2-4c8a-8994-a99c55406b42",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "Signup to Purchase",
+      "steps": [
+        "Signup",
+        "AddToCart",
+        "Purchase"
+      ],
+      "created_at": "2026-08-06T15:46:14.006385+00:00"
+    },
+    "start_date": "2026-07-01",
+    "end_date": "2026-08-05",
+    "steps": [
+      {
+        "step_index": 0,
+        "event_name": "Signup",
+        "users_reached": 0,
+        "conversion_from_start": 0.0,
+        "conversion_from_previous": 0.0,
+        "drop_off": 0,
+        "avg_time_from_previous_seconds": null
+      },
+      {
+        "step_index": 1,
+        "event_name": "AddToCart",
+        "users_reached": 0,
+        "conversion_from_start": 0.0,
+        "conversion_from_previous": 0.0,
+        "drop_off": 0,
+        "avg_time_from_previous_seconds": null
+      },
+      {
+        "step_index": 2,
+        "event_name": "Purchase",
+        "users_reached": 0,
+        "conversion_from_start": 0.0,
+        "conversion_from_previous": 0.0,
+        "drop_off": 0,
+        "avg_time_from_previous_seconds": null
+      }
+    ]
+  },
+  "errors": null
+}
+
+
+22) RETENTION SUMMARY
+-------------------------
+ENDPOINT
+GET /projects/{project_id}/retention/summary
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Retention summary fetched",
+  "data": {
+    "as_of": "2026-08-05",
+    "day1": { "eligible_users": 100, "retained_users": 40, "rate": 40.0 },
+    "day7": { "eligible_users": 100, "retained_users": 20, "rate": 20.0 },
+    "day30": { "eligible_users": 100, "retained_users": 8, "rate": 8.0 }
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Retention summary fetched",
+  "data": {
+    "as_of": "2026-08-06",
+    "day1": {
+      "eligible_users": 0,
+      "retained_users": 0,
+      "rate": 0.0
+    },
+    "day7": {
+      "eligible_users": 0,
+      "retained_users": 0,
+      "rate": 0.0
+    },
+    "day30": {
+      "eligible_users": 0,
+      "retained_users": 0,
+      "rate": 0.0
+    }
+  },
+  "errors": null
+}
+
+
+23) RETENTION MATRIX (cohort heatmap)
+-----------------------------------------
+ENDPOINT
+GET /projects/{project_id}/retention/matrix?period=week&num_periods=8&max_cohorts=8
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Retention matrix fetched",
+  "data": {
+    "period": "week",
+    "num_periods": 8,
+    "cohorts": [
+      { "cohort_start": "2026-06-01", "cohort_size": 120, "percentages": [100.0, 45.0, 30.0, null, null, null, null, null] }
+    ]
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Retention matrix fetched",
+  "data": {
+    "period": "week",
+    "num_periods": 8,
+    "cohorts": [
+      {
+        "cohort_start": "2026-08-03",
+        "cohort_size": 1,
+        "percentages": [
+          100.0,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "errors": null
+}
+
+
+24) CREATE EXPERIMENT (A/B test)
+-------------------------------------
+ENDPOINT
+POST /projects/{project_id}/experiments
+Header: Authorization: Bearer <access_token>
+Note: traffic_allocation across variants must sum to 100.
+
+SAMPLE INPUT
+{
+  "name": "Checkout Button Color",
+  "conversion_event": "Purchase",
+  "variants": [
+    { "name": "Control (Blue)", "traffic_allocation": 50 },
+    { "name": "Variant (Green)", "traffic_allocation": 50 }
+  ]
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Experiment created successfully",
+  "data": {
+    "id": "...",
+    "project_id": "...",
+    "name": "Checkout Button Color",
+    "conversion_event": "Purchase",
+    "status": "running",
+    "variants": [
+      { "id": "...", "name": "Control (Blue)", "traffic_allocation": 50, "is_control": true },
+      { "id": "...", "name": "Variant (Green)", "traffic_allocation": 50, "is_control": false }
+    ],
+    "created_at": "2026-08-05T10:30:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Experiment created successfully",
+  "data": {
+    "id": "41479cfc-fa11-4e6e-961b-5bbea5d86074",
+    "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+    "name": "Checkout Button Color",
+    "conversion_event": "Purchase",
+    "status": "running",
+    "variants": [
+      {
+        "id": "8b41088b-422e-48cc-83a2-e52b9660dc0b",
+        "name": "Control (Blue)",
+        "traffic_allocation": 50,
+        "is_control": true
+      },
+      {
+        "id": "a50a1dc0-456a-4c32-938c-beabf42a0c47",
+        "name": "Variant (Green)",
+        "traffic_allocation": 50,
+        "is_control": false
+      }
+    ],
+    "created_at": "2026-08-06T15:57:45.628994+00:00"
+  },
+  "errors": null
+}
+
+
+
+25) LIST EXPERIMENTS
+------------------------
+ENDPOINT
+GET /projects/{project_id}/experiments
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Experiments fetched",
+  "data": [
+    { "id": "...", "project_id": "...", "name": "Checkout Button Color", "conversion_event": "Purchase", "status": "running", "variants": [...], "created_at": "..." }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Experiments fetched",
+  "data": [
+    {
+      "id": "41479cfc-fa11-4e6e-961b-5bbea5d86074",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "Checkout Button Color",
+      "conversion_event": "Purchase",
+      "status": "running",
+      "variants": [
+        {
+          "id": "8b41088b-422e-48cc-83a2-e52b9660dc0b",
+          "name": "Control (Blue)",
+          "traffic_allocation": 50,
+          "is_control": true
+        },
+        {
+          "id": "a50a1dc0-456a-4c32-938c-beabf42a0c47",
+          "name": "Variant (Green)",
+          "traffic_allocation": 50,
+          "is_control": false
+        }
+      ],
+      "created_at": "2026-08-06T15:57:45.628994+00:00"
+    }
+  ],
+  "errors": null
+}
+
+
+26) EXPERIMENT RESULTS
+--------------------------
+ENDPOINT
+GET /projects/{project_id}/experiments/{experiment_id}/results
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Experiment results computed",
+  "data": {
+    "experiment": { "id": "...", "project_id": "...", "name": "Checkout Button Color", "conversion_event": "Purchase", "status": "running", "variants": [...], "created_at": "..." },
+    "variants": [
+      { "variant_id": "...", "name": "Control (Blue)", "is_control": true, "exposures": 500, "conversions": 40, "conversion_rate": 8.0, "uplift_vs_control": null, "p_value": null, "is_significant": false },
+      { "variant_id": "...", "name": "Variant (Green)", "is_control": false, "exposures": 500, "conversions": 55, "conversion_rate": 11.0, "uplift_vs_control": 3.0, "p_value": 0.041, "is_significant": true }
+    ],
+    "winner_variant_id": "variant-green-uuid"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Experiment results computed",
+  "data": {
+    "experiment": {
+      "id": "41479cfc-fa11-4e6e-961b-5bbea5d86074",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "Checkout Button Color",
+      "conversion_event": "Purchase",
+      "status": "running",
+      "variants": [
+        {
+          "id": "8b41088b-422e-48cc-83a2-e52b9660dc0b",
+          "name": "Control (Blue)",
+          "traffic_allocation": 50,
+          "is_control": true
+        },
+        {
+          "id": "a50a1dc0-456a-4c32-938c-beabf42a0c47",
+          "name": "Variant (Green)",
+          "traffic_allocation": 50,
+          "is_control": false
+        }
+      ],
+      "created_at": "2026-08-06T15:57:45.628994+00:00"
+    },
+    "variants": [
+      {
+        "variant_id": "8b41088b-422e-48cc-83a2-e52b9660dc0b",
+        "name": "Control (Blue)",
+        "is_control": true,
+        "exposures": 0,
+        "conversions": 0,
+        "conversion_rate": 0.0,
+        "uplift_vs_control": null,
+        "p_value": null,
+        "is_significant": false
+      },
+      {
+        "variant_id": "a50a1dc0-456a-4c32-938c-beabf42a0c47",
+        "name": "Variant (Green)",
+        "is_control": false,
+        "exposures": 0,
+        "conversions": 0,
+        "conversion_rate": 0.0,
+        "uplift_vs_control": 0.0,
+        "p_value": null,
+        "is_significant": false
+      }
+    ],
+    "winner_variant_id": null
+  },
+  "errors": null
+}
+
+
+
+
+27) CREATE SEGMENT
+----------------------
+ENDPOINT
+POST /projects/{project_id}/segments
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+{
+  "name": "US Power Users",
+  "conditions": [
+    { "type": "property", "key": "country", "operator": "equals", "value": "US" },
+    { "type": "event", "event_name": "Purchase", "operator": "at_least", "count": 2 }
+  ]
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Segment created successfully",
+  "data": {
+    "id": "...",
+    "project_id": "...",
+    "name": "US Power Users",
+    "conditions": [
+      { "type": "property", "key": "country", "operator": "equals", "value": "US", "event_name": null, "count": 1 },
+      { "type": "event", "key": null, "operator": "at_least", "value": null, "event_name": "Purchase", "count": 2 }
+    ],
+    "created_at": "2026-08-05T10:35:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Segment created successfully",
+  "data": {
+    "id": "136a2c54-609f-4e96-aefa-3250f931bfb0",
+    "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+    "name": "US Power Users",
+    "conditions": [
+      {
+        "type": "property",
+        "key": "country",
+        "operator": "equals",
+        "value": "US",
+        "event_name": null,
+        "count": 1
+      },
+      {
+        "type": "event",
+        "key": null,
+        "operator": "at_least",
+        "value": null,
+        "event_name": "Purchase",
+        "count": 2
+      }
+    ],
+    "created_at": "2026-08-06T16:06:44.335306+00:00"
+  },
+  "errors": null
+}
+
+
+28) LIST SEGMENTS
+---------------------
+ENDPOINT
+GET /projects/{project_id}/segments
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Segments fetched",
+  "data": [
+    { "id": "...", "project_id": "...", "name": "US Power Users", "conditions": [...], "created_at": "..." }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Segments fetched",
+  "data": [
+    {
+      "id": "136a2c54-609f-4e96-aefa-3250f931bfb0",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "US Power Users",
+      "conditions": [
+        {
+          "type": "property",
+          "key": "country",
+          "operator": "equals",
+          "value": "US",
+          "event_name": null,
+          "count": 1
+        },
+        {
+          "type": "event",
+          "key": null,
+          "operator": "at_least",
+          "value": null,
+          "event_name": "Purchase",
+          "count": 2
+        }
+      ],
+      "created_at": "2026-08-06T16:06:44.335306+00:00"
+    }
+  ],
+  "errors": null
+}
+
+
+29) PREVIEW SEGMENT
+-----------------------
+ENDPOINT
+GET /projects/{project_id}/segments/{segment_id}/preview
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Segment preview computed",
+  "data": {
+    "segment": { "id": "...", "project_id": "...", "name": "US Power Users", "conditions": [...], "created_at": "..." },
+    "matching_user_count": 34,
+    "sample_distinct_ids": ["user_123", "user_456", "user_789"]
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Segment preview computed",
+  "data": {
+    "segment": {
+      "id": "136a2c54-609f-4e96-aefa-3250f931bfb0",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "US Power Users",
+      "conditions": [
+        {
+          "type": "property",
+          "key": "country",
+          "operator": "equals",
+          "value": "US",
+          "event_name": null,
+          "count": 1
+        },
+        {
+          "type": "event",
+          "key": null,
+          "operator": "at_least",
+          "value": null,
+          "event_name": "Purchase",
+          "count": 2
+        }
+      ],
+      "created_at": "2026-08-06T16:06:44.335306+00:00"
+    },
+    "matching_user_count": 0,
+    "sample_distinct_ids": []
+  },
+  "errors": null
+}
+
+
+
+
+30) CREATE ALERT RULE
+-------------------------
+ENDPOINT
+POST /projects/{project_id}/alerts
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+{
+  "name": "DAU Drop Alert",
+  "metric": "dau",
+  "direction": "drop",
+  "threshold_percent": 20
+}
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Alert rule created successfully",
+  "data": {
+    "id": "...",
+    "project_id": "...",
+    "name": "DAU Drop Alert",
+    "metric": "dau",
+    "direction": "drop",
+    "threshold_percent": 20.0,
+    "created_at": "2026-08-05T10:40:00"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+
+{
+  "success": true,
+  "message": "Alert rule created successfully",
+  "data": {
+    "id": "d05ec577-4fe4-4021-bec3-27c82629a524",
+    "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+    "name": "DAU Drop Alert",
+    "metric": "dau",
+    "direction": "drop",
+    "threshold_percent": 20.0,
+    "created_at": "2026-08-06T16:09:19.081299+00:00"
+  },
+  "errors": null
+}
+
+
+
+
+31) LIST ALERT RULES
+------------------------
+ENDPOINT
+GET /projects/{project_id}/alerts
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Alert rules fetched",
+  "data": [
+    { "id": "...", "project_id": "...", "name": "DAU Drop Alert", "metric": "dau", "direction": "drop", "threshold_percent": 20.0, "created_at": "..." }
+  ],
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Alert rules fetched",
+  "data": [
+    {
+      "id": "d05ec577-4fe4-4021-bec3-27c82629a524",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "DAU Drop Alert",
+      "metric": "dau",
+      "direction": "drop",
+      "threshold_percent": 20.0,
+      "created_at": "2026-08-06T16:09:19.081299+00:00"
+    }
+  ],
+  "errors": null
+}
+
+
+
+
+32) CHECK ALERT RULE
+------------------------
+ENDPOINT
+GET /projects/{project_id}/alerts/{rule_id}/check
+Header: Authorization: Bearer <access_token>
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+{
+  "success": true,
+  "message": "Alert check complete",
+  "data": {
+    "rule": { "id": "...", "project_id": "...", "name": "DAU Drop Alert", "metric": "dau", "direction": "drop", "threshold_percent": 20.0, "created_at": "..." },
+    "current_value": 35,
+    "previous_value": 50,
+    "percent_change": -30.0,
+    "triggered": true,
+    "message": "DAU dropped 30.0% (from 50 to 35), exceeding threshold of 20%"
+  },
+  "errors": null
+}
+
+TESTED RESULT :
+
+{
+  "success": true,
+  "message": "Alert check complete",
+  "data": {
+    "rule": {
+      "id": "d05ec577-4fe4-4021-bec3-27c82629a524",
+      "project_id": "168b489f-9216-4e13-b848-9d104a8257fc",
+      "name": "DAU Drop Alert",
+      "metric": "dau",
+      "direction": "drop",
+      "threshold_percent": 20.0,
+      "created_at": "2026-08-06T16:09:19.081299+00:00"
+    },
+    "current_value": 1.0,
+    "previous_value": 0.0,
+    "percent_change": 100.0,
+    "triggered": false,
+    "message": "No threshold breach detected."
+  },
+  "errors": null
+}
+
+
+33) EXPORT EVENTS CSV
+-------------------------
+ENDPOINT
+GET /projects/{project_id}/reports/events.csv?start_date=2026-07-01&end_date=2026-08-05
+Header: Authorization: Bearer <access_token>
+Note: response is NOT the JSON envelope — it's a raw CSV file stream
+(Content-Type: text/csv, Content-Disposition: attachment).
+
+SAMPLE INPUT
+(no body)
+
+SAMPLE OUTPUT
+event_name,distinct_id,timestamp,properties
+Purchase,user_123,2026-08-05T10:10:00,"{'amount': 49.99, 'country': 'IN'}"
+Signup,user_456,2026-08-04T09:00:00,"{}"
+
+TESTED RESULT :
+
+{
+  "detail": "Not Found"
+}
+
+
+34) LIVE EVENT FEED (WebSocket)
+------------------------------------
+ENDPOINT
+WS /ws/projects/{project_id}/live?token=<access_token>
+Note: Thunder Client's WebSocket tab (not REST). Connect, then trigger
+a POST /track call in another tab — the message should arrive here.
+
+SAMPLE INPUT
+(no send required; server pushes messages)
+
+SAMPLE OUTPUT
+{
+  "type": "event",
+  "id": "...",
+  "name": "Purchase",
+  "distinct_id": "user_123",
+  "properties": { "amount": 49.99, "country": "IN" },
+  "timestamp": "2026-08-05T10:10:00"
+}
+
+TESTED RESULT :
+
+
+Connected to ws://localhost:8000/api/v1/ws/projects/168b489f-9216-4e13-b848-9d104a8257fc/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZWZiYzhlNy1hZmQ2LTRiZmUtOGJiOC01ZmMzMzlhOTI4ZDUiLCJleHAiOjE3ODYwNDA0NzEsInR5cGUiOiJhY2Nlc3MifQ.p-wKI2EBKWfkjLag-lVSmpeCJNguzNawdqolumtcsw8
+21:58:20.340
+Handshake Details
+Request URL: http://localhost:8000/api/v1/ws/projects/168b489f-9216-4e13-b848-9d104a8257fc/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZWZiYzhlNy1hZmQ2LTRiZmUtOGJiOC01ZmMzMzlhOTI4ZDUiLCJleHAiOjE3ODYwNDA0NzEsInR5cGUiOiJhY2Nlc3MifQ.p-wKI2EBKWfkjLag-lVSmpeCJNguzNawdqolumtcsw8
+Request Method: GET
+Status Code: 101 Switching Protocols
+Request Headers
+Sec-WebSocket-Version: 13
+Sec-WebSocket-Key: dNjgkrILDCFno71Y/70ikA==
+Connection: Upgrade
+Upgrade: websocket
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+Host: localhost:8000
+Response Headers
+
+
+================================================================
+SUGGESTED TEST ORDER
+================================================================
+1. Health check
+2. Register -> copy access_token
+3. Login -> confirm same works
+4. Get profile (Bearer token)
+5. Create workspace -> copy workspace_id
+6. Create project (under workspace_id) -> copy project_id + api_key
+7. Track event (using api_key, NOT Bearer token) x several times
+8. Event explorer / event names
+9. Dashboard summary / trend
+10. Create funnel -> run analysis
+11. Retention summary / matrix
+12. Create experiment -> results
+13. Create segment -> preview
+14. Create alert rule -> check
+15. Export CSV report
+16. Workspace member management (invite/update/remove) — needs a 2nd registered user
+17. WebSocket live feed
+================================================================

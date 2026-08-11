@@ -11,7 +11,7 @@ notification delivery (email/Slack/webhook) is a natural next step but
 out of scope here since this environment has no outbound mail/queue
 infrastructure to send through.
 """
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timezone
 from typing import Optional
 
 import pandas as pd
@@ -24,7 +24,7 @@ DEFAULT_REVENUE_PROPERTY = "amount"
 
 
 def _day_bounds(d: date) -> tuple[datetime, datetime]:
-    return datetime.combine(d, time.min), datetime.combine(d, time.max)
+    return datetime.combine(d, time.min, tzinfo=timezone.utc), datetime.combine(d, time.max, tzinfo=timezone.utc)
 
 
 def _metric_value(frame: pd.DataFrame, metric: str, d: date) -> float:

@@ -4,7 +4,7 @@ ownership, pulls raw events via the repository, and hands them to the
 analytics engine (app/analytics/metrics.py) to compute KPIs.
 """
 import uuid
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
@@ -29,7 +29,8 @@ class AnalyticsService:
     def summary(self, project_id: uuid.UUID, user_id: uuid.UUID, filters: DashboardFilters) -> DashboardSummary:
         self.project_service.get_owned_project(project_id, user_id)
         start, end = self._resolve_range(filters)
-        start_dt, end_dt = datetime.combine(start, time.min), datetime.combine(end, time.max)
+        start_dt = datetime.combine(start, time.min, tzinfo=timezone.utc)
+        end_dt = datetime.combine(end, time.max, tzinfo=timezone.utc)
 
         events = self.repo.get_events_in_range(project_id, start_dt, end_dt)
         frame = metrics._events_to_frame(list(events))
@@ -38,9 +39,13 @@ class AnalyticsService:
         active_users = metrics.active_user_count(frame, start_dt, end_dt)
         new_users = metrics.new_user_count(first_seen, start_dt, end_dt)
 
-        dau = metrics.active_user_count(frame, datetime.combine(end, time.min), end_dt)
-        wau = metrics.active_user_count(frame, datetime.combine(end - timedelta(days=6), time.min), end_dt)
-        mau = metrics.active_user_count(frame, datetime.combine(end - timedelta(days=29), time.min), end_dt)
+        dau = metrics.active_user_count(frame, datetime.combine(end, time.min, tzinfo=timezone.utc), end_dt)
+        wau = metrics.active_user_count(
+            frame, datetime.combine(end - timedelta(days=6), time.min, tzinfo=timezone.utc), end_dt
+        )
+        mau = metrics.active_user_count(
+            frame, datetime.combine(end - timedelta(days=29), time.min, tzinfo=timezone.utc), end_dt
+        )
 
         return DashboardSummary(
             start_date=start,
