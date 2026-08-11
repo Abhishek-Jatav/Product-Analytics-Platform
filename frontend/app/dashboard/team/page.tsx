@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/common/Button";
 import { Card } from "@/components/common/Card";
 import { Modal } from "@/components/common/Modal";
+import { ApiKeyCard } from "@/components/dashboard/ApiKeyCard";
 import { TeamMemberRow } from "@/components/dashboard/TeamMemberRow";
 import { InviteMemberForm } from "@/components/forms/InviteMemberForm";
 import { DashboardShell } from "@/components/layout/DashboardShell";
@@ -13,7 +14,7 @@ import { useWorkspaceContext } from "@/context/WorkspaceContext";
 import { useWorkspaceMembers, useWorkspaces } from "@/hooks/useWorkspaces";
 
 export default function TeamPage() {
-  const { currentWorkspaceId } = useWorkspaceContext();
+  const { currentWorkspaceId, currentProjectId } = useWorkspaceContext();
   const { user } = useAuth();
   const { data: workspaces } = useWorkspaces();
   const { data: members, isLoading } = useWorkspaceMembers(currentWorkspaceId);
@@ -32,7 +33,13 @@ export default function TeamPage() {
             Who has access to {currentWorkspace?.name ?? "this workspace"}.
           </p>
         </div>
-        {canInvite && <Button onClick={() => setIsModalOpen(true)}>Add member</Button>}
+        {canInvite && (
+          <Button onClick={() => setIsModalOpen(true)}>Add member</Button>
+        )}
+      </div>
+
+      <div className="mb-6">
+        <ApiKeyCard projectId={currentProjectId} />
       </div>
 
       <Card>
@@ -53,9 +60,15 @@ export default function TeamPage() {
         )}
       </Card>
 
-      <Modal title="Add a team member" isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal
+        title="Add a team member"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}>
         {currentWorkspaceId && (
-          <InviteMemberForm workspaceId={currentWorkspaceId} onInvited={() => setIsModalOpen(false)} />
+          <InviteMemberForm
+            workspaceId={currentWorkspaceId}
+            onInvited={() => setIsModalOpen(false)}
+          />
         )}
       </Modal>
     </DashboardShell>

@@ -35,3 +35,6 @@ class ProjectRepository:
 
     def get_by_api_key(self, key: str) -> Optional[APIKey]:
         return self.db.query(APIKey).filter(APIKey.key == key).first()
+
+    def get_api_key_for_project(self, project_id: uuid.UUID) -> Optional[APIKey]:
+        return self.db.query(APIKey).filter(APIKey.project_id == project_id).first()

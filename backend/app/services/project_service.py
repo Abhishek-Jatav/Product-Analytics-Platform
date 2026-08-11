@@ -40,3 +40,10 @@ class ProjectService:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "Project not found")
         self.workspace_service.assert_member(project.workspace_id, user_id)
         return project
+
+    def get_api_key(self, project_id: uuid.UUID, user_id: uuid.UUID) -> APIKeyResponse:
+        self.get_owned_project(project_id, user_id)
+        api_key = self.repo.get_api_key_for_project(project_id)
+        if not api_key:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "API key not found")
+        return APIKeyResponse.model_validate(api_key)

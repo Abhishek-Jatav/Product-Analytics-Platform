@@ -12,6 +12,7 @@ from app.api.events import router as events_router
 from app.api.experiments import router as experiments_router
 from app.api.funnels import router as funnels_router
 from app.api.health import router as health_router
+from app.api.projects import project_router
 from app.api.projects import router as projects_router
 from app.api.reports import router as reports_router
 from app.api.retention import router as retention_router
@@ -25,6 +26,7 @@ api_router.include_router(health_router)
 api_router.include_router(auth_router)
 api_router.include_router(workspaces_router)
 api_router.include_router(projects_router)
+api_router.include_router(project_router)
 api_router.include_router(events_router)
 api_router.include_router(analytics_router)
 api_router.include_router(funnels_router)

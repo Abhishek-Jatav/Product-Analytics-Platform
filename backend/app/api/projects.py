@@ -1,6 +1,7 @@
 """
 Project endpoints, nested under a workspace: create and list projects,
-each project creation returns its auto-generated API key.
+each project creation returns its auto-generated API key. Also exposes a
+lookup route to fetch a project's existing API key at any later time.
 """
 import uuid
 
@@ -15,6 +16,7 @@ from app.schemas.project import CreateProjectRequest
 from app.services.project_service import ProjectService
 
 router = APIRouter(prefix="/workspaces/{workspace_id}/projects", tags=["projects"])
+project_router = APIRouter(prefix="/projects/{project_id}", tags=["projects"])
 
 
 @router.post("")
@@ -36,3 +38,13 @@ def list_projects(
 ):
     projects = ProjectService(db).list_for_workspace(workspace_id, current_user.id)
     return success_response("Projects fetched", [p.model_dump() for p in projects])
+
+
+@project_router.get("/api-key")
+def get_api_key(
+    project_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    api_key = ProjectService(db).get_api_key(project_id, current_user.id)
+    return success_response("API key fetched", api_key.model_dump())
